@@ -1,0 +1,660 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Help the FSE First</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --paper:#E9E7DE; --panel:#F0EEE7; --panel2:#E4E2D9; --ink:#2B322D; --ink2:#59615A; --ink3:#8C9389; --ink4:#A8AEA3;
+  --line:#BFC2B8; --line2:#D5D7CD; --red:#C3392B; --redD:#8E2B24; --good:#2F6B57; --goodS:#DDE8E1;
+  --auto:#4F6A73; --fse:#A4813F; --night:#1F2622;
+  --disp:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:#202722;color:var(--ink);font-family:var(--body);overflow:hidden}
+#viewport{position:fixed;left:0;top:0;right:0;bottom:64px;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:var(--paper);overflow:hidden;cursor:pointer}
+.export #viewport{bottom:0}
+.export #ui,.export #cover{display:none!important}
+.export #stage{cursor:default}
+
+/* chrome */
+.cm{position:absolute;width:22px;height:22px;border:2px solid var(--ink2);z-index:30}
+.cm.tl{left:28px;top:28px;border-right:0;border-bottom:0}.cm.tr{right:28px;top:28px;border-left:0;border-bottom:0}
+.cm.bl{left:28px;bottom:28px;border-right:0;border-top:0}.cm.br{right:28px;bottom:28px;border-left:0;border-top:0}
+#cTop{position:absolute;left:90px;right:90px;top:44px;display:flex;justify-content:space-between;align-items:center;font:500 17px/1 var(--mono);letter-spacing:.16em;color:var(--ink3);text-transform:uppercase;z-index:30}
+#cTop b{color:var(--red);font-weight:600}
+#cBot{position:absolute;left:90px;right:90px;top:1012px;display:flex;align-items:center;gap:28px;z-index:30}
+#segs{flex:1;display:flex;gap:4px;height:12px}
+#segs i{flex:1;background:var(--line2)}
+#segs i.on{background:var(--ink2)}
+#segs i.hot{background:var(--red)}
+#cTime{font:500 17px/1 var(--mono);letter-spacing:.1em;color:var(--ink3);font-variant-numeric:tabular-nums}
+#fadeIn,#fadeOut{position:absolute;inset:0;background:var(--paper);z-index:40;pointer-events:none}
+
+/* shared */
+.scene{position:absolute;inset:0;visibility:hidden}
+.abs{position:absolute}
+.h1{font:700 132px/.92 var(--disp);white-space:nowrap;letter-spacing:.005em;text-transform:uppercase;color:var(--ink);margin:0}
+.h1 em{font-style:normal;color:var(--red)}
+.h2{font:700 72px/1 var(--disp);letter-spacing:.01em;text-transform:uppercase;color:var(--ink);margin:0}
+.eyebrow{font:600 18px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+.lead{font:500 38px/1.25 var(--body);color:var(--ink2)}
+.p{font:500 34px/1.3 var(--body);color:var(--ink)}
+.mono{font-family:var(--mono)}
+.tab-img{object-fit:contain;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%)}
+svg{overflow:visible}
+.draw{fill:none;stroke-dasharray:1;stroke-dashoffset:1}
+
+/* S1 */
+#s1 .rule{height:4px;width:520px;background:var(--red)}
+
+/* S2 */
+#terr{left:90px;top:150px;width:900px;height:820px;border:1.5px solid var(--line);background:var(--panel)}
+#terr .lab{position:absolute;left:22px;top:18px;font:500 15px/1 var(--mono);letter-spacing:.16em;color:var(--ink3)}
+#night{left:1070px;top:600px;width:760px;height:250px;background:var(--night);color:var(--paper);display:flex;align-items:center;gap:40px;padding:0 44px}
+#night .clock{font:500 104px/1 var(--mono);letter-spacing:.02em;color:#F0EEE7}
+#night .cl{font:500 15px/1.4 var(--mono);letter-spacing:.16em;color:#9AA39C;margin-top:12px}
+#forms{position:relative;width:260px;height:190px;margin-left:auto}
+#forms .sheet{position:absolute;width:150px;height:190px;background:#F0EEE7;border:1px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.35);padding:16px 14px}
+#forms .sheet i{display:block;height:6px;background:#C9CBC1;margin-bottom:12px}
+#forms .sheet i:nth-child(3n){width:62%}
+#forms .sheet i:first-child{background:var(--red);width:48%;height:8px}
+
+/* S3 */
+.qcard{position:absolute;top:320px;width:414px;height:430px;background:var(--panel);border:1.5px solid var(--line);padding:30px 30px;overflow:hidden}
+.qcard .role{font:600 18px/1 var(--mono);letter-spacing:.18em;color:var(--red);text-transform:uppercase}
+.qcard .q{font:600 50px/1.08 var(--disp);color:var(--ink);margin-top:28px;position:relative;z-index:1}
+.qcard .na{position:absolute;left:30px;bottom:28px;font:500 15px/1 var(--mono);letter-spacing:.14em;color:var(--ink3);z-index:1}
+.qcard .ghost{position:absolute;right:-10px;bottom:-60px;font:700 300px/1 var(--disp);color:var(--line2)}
+
+/* S4 */
+.stampbox{position:absolute;top:350px;width:560px;height:330px;background:var(--panel);border:1.5px solid var(--line);padding:40px 38px}
+.stamp{display:inline-block;font:700 62px/1 var(--disp);letter-spacing:.06em;color:var(--red);border:5px solid var(--red);padding:10px 20px 6px;transform-origin:30% 50%}
+.stampbox .ex{font:500 32px/1.3 var(--body);color:var(--ink);margin-top:34px}
+#fixbar{left:90px;top:730px;width:1740px;height:112px;background:var(--ink);color:var(--paper);display:flex;align-items:center;padding:0 44px;font:500 40px/1 var(--body)}
+
+/* loops */
+.ringwrap{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none}
+.ctext{position:absolute;left:520px;top:590px;transform:translate(-50%,-50%);text-align:center}
+.ctext .k{font:600 18px/1 var(--mono);letter-spacing:.2em;color:var(--ink3)}
+.ctext .v{font:700 88px/1 var(--disp);color:var(--ink);margin-top:10px;font-variant-numeric:tabular-nums}
+.litem{position:absolute;left:930px;width:900px;height:104px;display:flex;align-items:center;gap:26px;border-left:5px solid var(--line2);padding-left:26px}
+.litem .n{flex:none;width:54px;height:54px;border-radius:50%;border:2px solid var(--ink3);display:grid;place-items:center;font:600 24px/1 var(--mono);color:var(--ink3)}
+.litem .t{font:500 36px/1.15 var(--body);color:var(--ink)}
+.meter{position:absolute;top:760px;width:430px}
+.meter .k{font:600 16px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);margin-bottom:16px}
+.icons{display:flex;gap:6px;height:34px;align-items:flex-end}
+.icons i{width:20px;height:28px;background:var(--panel);border:2px solid var(--ink2);opacity:0}
+.track{height:18px;background:var(--line2);position:relative}
+.track b{position:absolute;left:0;top:0;bottom:0;width:50%}
+
+/* S7 */
+#track{left:0;top:230px;width:1920px;height:170px}
+.wnode{position:absolute;top:0;width:210px;transform:translateX(-50%);text-align:center}
+.wnode .dot{width:34px;height:34px;border-radius:50%;margin:23px auto 0;border:3px solid var(--ink3);background:var(--paper);position:relative;z-index:2}
+.wnode .nm{font:600 25px/1.1 var(--body);color:var(--ink);margin-top:16px}
+.wnode .tg{font:600 13px/1 var(--mono);letter-spacing:.14em;margin-top:8px}
+.wnode.auto .tg{color:var(--auto)} .wnode.fse .tg{color:var(--fse)}
+#wline{position:absolute;left:150px;top:40px;width:1620px;height:3px;background:var(--line)}
+#wfill{position:absolute;left:150px;top:40px;height:3px;background:var(--ink);width:0}
+#wmark{position:absolute;top:10px;width:60px;height:60px;margin-left:-30px;border:2px solid var(--red);border-radius:50%;z-index:1}
+#woImg{left:90px;top:430px;width:880px;height:540px}
+#woImg img{width:100%;height:100%}
+#rec{left:1010px;top:430px;width:820px;height:540px;background:var(--panel);border:1.5px solid var(--line)}
+#rec .hd{display:flex;justify-content:space-between;padding:18px 24px;border-bottom:1.5px solid var(--line);font:600 16px/1 var(--mono);letter-spacing:.16em;color:var(--ink3)}
+#rec .hd b{color:var(--red);font-weight:600}
+.rrow{display:grid;grid-template-columns:170px 1fr auto;align-items:center;gap:14px;height:58px;padding:0 24px;border-bottom:1px solid var(--line2)}
+.rrow .rl{font:600 14px/1 var(--mono);letter-spacing:.14em;color:var(--ink3)}
+.rrow .rv{font:600 25px/1.1 var(--body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrow .rs{font:600 12px/1 var(--mono);letter-spacing:.1em;padding:6px 8px;border:1.5px solid currentColor;white-space:nowrap}
+.rs.auto{color:var(--auto)} .rs.fse{color:var(--fse)}
+#voice{left:120px;top:880px;display:flex;align-items:center;gap:14px;background:var(--night);color:#F0EEE7;padding:12px 18px;font:600 15px/1 var(--mono);letter-spacing:.14em}
+#voice .rec{width:12px;height:12px;border-radius:50%;background:var(--red)}
+#wave{display:flex;gap:4px;align-items:center;height:36px}
+#wave i{width:5px;background:#F0EEE7;height:10px}
+#scan{left:430px;top:600px;width:250px;height:220px}
+#scan .br{position:absolute;width:40px;height:40px;border:5px solid var(--red)}
+#scan .br:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}#scan .br:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+#scan .br:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}#scan .br:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+#scan .ln{position:absolute;left:8px;right:8px;height:3px;background:var(--red);box-shadow:0 0 12px var(--red)}
+#scanChip{left:420px;top:832px;background:var(--red);color:#fff;font:600 16px/1 var(--mono);letter-spacing:.14em;padding:10px 14px}
+#woCap{right:90px;top:136px;width:500px;text-align:right;font:600 32px/1.2 var(--body);color:var(--red)}
+#legend{left:90px;top:395px;display:flex;gap:28px;font:600 14px/1 var(--mono);letter-spacing:.14em;color:var(--ink3)}
+#legend span{display:flex;align-items:center;gap:8px}
+#legend i{width:14px;height:14px;border-radius:50%;display:inline-block}
+
+/* S8 */
+.rstep{top:300px;font:600 16px/1 var(--mono);letter-spacing:.16em;color:var(--ink3)}
+.rstep b{color:var(--red);margin-right:12px;font-weight:600}
+.rarrow{top:520px;font:500 40px/1 var(--mono);color:var(--ink3)}
+#live{left:90px;top:334px;width:545px}
+#live .vid{position:relative;height:330px;background:var(--night);overflow:hidden}
+#live .vid img{width:100%;height:100%;object-fit:cover;opacity:.85}
+#live .tagl{position:absolute;left:14px;top:14px;display:flex;align-items:center;gap:8px;background:rgba(31,38,34,.85);color:#F0EEE7;font:600 13px/1 var(--mono);letter-spacing:.12em;padding:8px 10px}
+#live .tagl i{width:10px;height:10px;border-radius:50%;background:var(--red)}
+#live .pip{position:absolute;right:14px;bottom:14px;width:150px;height:96px;background:var(--night);border:2px solid #F0EEE7;color:#F0EEE7;font:600 12px/1.3 var(--mono);letter-spacing:.1em;display:flex;align-items:center;gap:10px;padding:0 12px}
+#live .pip .av{flex:none;width:34px;height:34px;border-radius:50%;background:#8C9389}
+#live .tr{font:500 24px/1.25 var(--body);color:var(--ink);margin-top:14px;display:flex;gap:12px}
+#live .tr b{flex:none;width:74px;font:600 13px/1.9 var(--mono);letter-spacing:.12em;color:var(--auto)}
+#casecard{left:679px;top:334px;width:545px;background:var(--panel);border:1.5px solid var(--line);padding:22px 24px}
+#casecard .hd{display:flex;justify-content:space-between;font:600 14px/1 var(--mono);letter-spacing:.14em;color:var(--ink3);padding-bottom:14px;border-bottom:1.5px solid var(--line)}
+#casecard .sym{font:600 27px/1.2 var(--body);color:var(--ink);margin:16px 0 10px}
+#casecard .sym b,#library .res b{display:block;font:600 12px/1 var(--mono);letter-spacing:.14em;color:var(--red);margin-bottom:8px}
+#casecard .chap{display:flex;gap:16px;align-items:baseline;font:500 24px/1.2 var(--body);color:var(--ink);padding:9px 0;border-bottom:1px solid var(--line2)}
+#casecard .chap span{flex:none;font:600 17px/1 var(--mono);color:var(--auto)}
+#casecard .ok{display:inline-block;margin-top:18px;background:var(--good);color:#fff;font:600 15px/1 var(--mono);letter-spacing:.12em;padding:10px 14px}
+#library{left:1268px;top:334px;width:562px}
+#library .search{display:flex;align-items:center;gap:4px;background:#fff;border:2px solid var(--ink);padding:16px 18px;height:64px;font:500 26px/1 var(--body);color:var(--ink)}
+#library .search::before{content:"⌕";font-size:30px;color:var(--ink3);margin-right:10px}
+#library .caret{width:2px;height:28px;background:var(--red)}
+#library .res{font:600 30px/1.2 var(--body);color:var(--ink);margin-top:24px}
+#library .res b{display:inline;font:700 44px/1 var(--disp);color:var(--ink);letter-spacing:0;margin:0 6px 0 0}
+#library .bars{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+#library .bar{display:grid;grid-template-columns:130px 1fr 40px;align-items:center;gap:12px;font:500 22px/1 var(--body);color:var(--ink2)}
+#library .bar i{display:block;height:14px;background:var(--auto)}
+#library .bar em{font:600 18px/1 var(--mono);font-style:normal;color:var(--ink)}
+#library .hit{margin-top:26px;display:flex;gap:16px;align-items:center;background:var(--panel);border:1.5px solid var(--line);border-left:5px solid var(--red);padding:16px 18px}
+#library .hit .play{flex:none;width:50px;height:50px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:20px}
+#library .hit b{display:block;font:700 30px/1 var(--disp);text-transform:uppercase;color:var(--ink)}
+#library .hit div{font:500 22px/1.3 var(--body);color:var(--ink2)}
+
+/* S9 */
+#tablet{left:90px;top:245px;width:560px;height:720px;background:var(--night);border-radius:44px;padding:30px}
+#tablet .scr{width:100%;height:100%;background:var(--panel);border-radius:18px;padding:26px 24px;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+#tablet .sb{display:flex;justify-content:space-between;font:600 13px/1 var(--mono);letter-spacing:.14em;color:var(--ink3)}
+#tablet .wt{font:700 38px/1 var(--disp);color:var(--ink);text-transform:uppercase}
+#tablet .hist{background:#fff;border:1.5px solid var(--line);padding:14px 16px;font:500 20px/1.35 var(--body);color:var(--ink2)}
+#tablet .hist b{display:block;font:600 13px/1 var(--mono);letter-spacing:.14em;color:var(--ink3);margin-bottom:8px}
+#tablet .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#tablet .btn{border:2px solid var(--ink);padding:18px 14px;font:700 22px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:#fff}
+#tablet .sign{margin-top:auto;background:var(--red);color:#fff;text-align:center;padding:20px;font:700 26px/1 var(--disp);letter-spacing:.08em;text-transform:uppercase}
+.ocol{position:absolute;top:255px;width:354px}
+.ocol .hdr{border-top:6px solid var(--ink);padding-top:16px;font:700 34px/1.05 var(--disp);text-transform:uppercase;color:var(--ink);height:96px}
+.ocol.co .hdr{border-color:var(--good)} .ocol.fs .hdr{border-color:var(--ink2)} .ocol.no .hdr{border-color:var(--red)}
+.oit{font:500 27px/1.25 var(--body);color:var(--ink);border-left:3px solid var(--line);padding:4px 0 4px 16px;margin-top:20px}
+.ocol.no .oit{border-left-color:var(--red)}
+
+/* S10 */
+#qms{left:90px;top:318px;width:1740px}
+.qhead,.qrow{display:grid;grid-template-columns:560px 60px 1fr 90px;align-items:center}
+.qhead{font:600 15px/1 var(--mono);letter-spacing:.16em;color:var(--ink3);padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.qrow{height:82px;border-bottom:1px solid var(--line)}
+.qrow .rq{font:600 34px/1 var(--body);color:var(--ink)}
+.qrow .ar{font:500 30px/1 var(--mono);color:var(--ink3)}
+.qrow .src{font:500 30px/1.15 var(--body);color:var(--ink2)}
+.qrow .ok{width:50px;height:50px;border-radius:50%;background:var(--good);color:#fff;display:grid;place-items:center;font:700 30px/1 var(--body);justify-self:end}
+#qcall{left:90px;top:870px;width:1740px;height:100px;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
+#qcall .t{font:600 38px/1 var(--body)}
+#qcall .c{font:500 15px/1 var(--mono);letter-spacing:.14em;color:#AEB5AD}
+
+/* S11 */
+.ccard{position:absolute;top:300px;width:562px;height:640px;background:var(--panel);border:1.5px solid var(--line);padding:28px 28px;display:flex;flex-direction:column}
+.ccard .role{font:600 16px/1 var(--mono);letter-spacing:.18em;color:var(--red);text-transform:uppercase}
+.ccard .echo{font:500 24px/1.2 var(--body);color:var(--ink3);margin-top:10px;min-height:58px}
+.ccard .co{font:700 46px/1 var(--disp);text-transform:uppercase;color:var(--ink);border-top:1.5px solid var(--line);padding-top:22px;margin-top:18px}
+.ccard .ind{font:600 13px/1 var(--mono);letter-spacing:.14em;color:var(--ink3);margin-top:10px}
+.ccard .tx{font:500 30px/1.3 var(--body);color:var(--ink);margin-top:22px}
+.ccard .ft{margin-top:22px;border-top:1.5px solid var(--line);padding-top:16px;font:600 28px/1.25 var(--body);color:var(--ink)}
+.ccard .ft b{display:block;font:600 13px/1 var(--mono);letter-spacing:.16em;color:var(--red);margin-bottom:10px}
+.ccard .src{margin-top:auto;font:500 12px/1.3 var(--mono);letter-spacing:.12em;color:var(--ink3)}
+.mhead{top:262px;font:600 16px/1 var(--mono);letter-spacing:.18em;color:var(--ink3)}
+.mrow{position:absolute;left:90px;width:1740px;display:grid;grid-template-columns:820px 80px 840px;align-items:start;border-top:1.5px solid var(--line);padding-top:22px}
+.mrow .l{font:500 36px/1.2 var(--body);color:var(--ink2)}
+.mrow .ar{font:500 36px/1.2 var(--mono);color:var(--ink3)}
+.mrow .r{font:600 36px/1.2 var(--body);color:var(--ink)}
+
+/* UI */
+#ui{position:fixed;left:0;right:0;bottom:0;height:64px;background:#171C19;display:flex;align-items:center;gap:16px;padding:0 20px;color:#DDE2DC;font:500 14px/1 var(--mono)}
+#ui button{font:600 14px/1 var(--mono);letter-spacing:.1em;color:#171C19;background:#E9E7DE;border:0;padding:11px 16px;cursor:pointer;min-width:96px}
+#ui button:focus-visible,#scrub:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+#scrub{flex:1;accent-color:var(--red);min-width:60px}
+#uiTime{font-variant-numeric:tabular-nums;white-space:nowrap}
+#cover{position:fixed;left:0;right:0;top:0;bottom:64px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6vh;pointer-events:none}
+#cover button{pointer-events:auto;font:700 26px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--red);border:0;padding:20px 34px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+#cover button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media (max-width:600px){#ui{gap:10px;padding:0 12px}#ui button{min-width:0;padding:10px 12px}#cover button{font-size:18px;padding:14px 20px}}
+</style>
+
+<div id="viewport">
+<div id="stage" role="img" aria-label="Animated brief: Help the FSE first, a different logic for running field service">
+
+  <i class="cm tl"></i><i class="cm tr"></i><i class="cm bl"></i><i class="cm br"></i>
+  <div id="cTop"><span>Field service <b>·</b> concept brief</span><span id="cScene">01 / 11 · Intro</span></div>
+  <div id="cBot"><div id="segs"></div><span id="cTime">00:00 / 03:17</span></div>
+
+  <!-- S1 INTRO -->
+  <section class="scene" id="s1" data-in="0" data-out="12.3" data-name="Intro">
+    <img class="abs tab-img" src="tablo_realfront.webp" alt="" style="left:1010px;top:110px;width:900px;height:860px" data-a="fade 0.3 2.2" data-kb="0 4.6 1.05 1.0">
+    <div class="abs eyebrow" style="left:110px;top:300px" data-a="up 0.9 0.8">Field service · Tablo installed base</div>
+    <h1 class="abs h1" style="left:104px;top:350px" data-a="up 1.4 1.0">Help the<br>FSE <em>first.</em></h1>
+    <div class="abs rule" style="left:110px;top:630px" data-a="wipe 2.5 0.9"></div>
+    <div class="abs lead" style="left:110px;top:668px;width:800px" data-a="up 2.8 0.9">A different logic for running field service</div>
+    <div class="abs mono" style="left:110px;top:760px;font-size:16px;letter-spacing:.18em;color:var(--ink3)" data-a="fade 3.8 0.9">DRAFT FOR DISCUSSION</div>
+  </section>
+
+  <!-- S2 THE FIELD -->
+  <section class="scene" id="s2" data-in="11.8" data-out="24.3" data-name="The field">
+    <div class="abs" id="terr" data-a="fade 12.1 0.7"><span class="lab">SERVICE TERRITORY · ILLUSTRATIVE</span><svg id="terrSvg" width="900" height="820" viewBox="0 0 900 820"></svg></div>
+    <h2 class="abs h2" style="left:1070px;top:160px;width:780px" data-a="up 12.5 0.8">More engineers in the field</h2>
+    <p class="abs p" style="left:1070px;top:340px;width:760px;margin:0" data-a="up 13.8 0.8">Every year we send more FSEs to more sites.</p>
+    <p class="abs p" style="left:1070px;top:440px;width:760px;margin:0;color:var(--ink2)" data-a="up 16.2 0.8">What happens on site still reaches us as hours and forms, filled in afterwards.</p>
+    <div class="abs" id="night" data-a="up 18.4 0.8">
+      <div><div class="clock">22:47</div><div class="cl">SERVICE REPORTS DUE</div></div>
+      <div id="forms"></div>
+    </div>
+    <p class="abs" style="left:1070px;top:880px;margin:0;font:700 40px/1 var(--body);color:var(--red)" data-a="up 21.2 0.8">Written late, from memory. Hard to trust.</p>
+  </section>
+
+  <!-- S3 FOUR QUESTIONS -->
+  <section class="scene" id="s3" data-in="23.8" data-out="37.3" data-name="Four questions">
+    <h2 class="abs h2" style="left:90px;top:150px" data-a="up 24.3 0.8">Four questions we can't answer today</h2>
+    <div class="abs lead" style="left:90px;top:236px" data-a="up 24.9 0.8">Each team that depends on field service has one.</div>
+    <div class="qcard" style="left:90px" data-a="up 25.8 0.8"><div class="ghost">?</div><div class="role">Finance</div><div class="q">What did this repair actually cost?</div><div class="na">NO RELIABLE ANSWER TODAY</div></div>
+    <div class="qcard" style="left:532px" data-a="up 27.4 0.8"><div class="ghost">?</div><div class="role">Service leadership</div><div class="q">Where does FSE time really go?</div><div class="na">NO RELIABLE ANSWER TODAY</div></div>
+    <div class="qcard" style="left:974px" data-a="up 29.0 0.8"><div class="ghost">?</div><div class="role">Quality &amp; Regulatory</div><div class="q">Which failures and part lots are trending?</div><div class="na">NO RELIABLE ANSWER TODAY</div></div>
+    <div class="qcard" style="left:1416px" data-a="up 30.6 0.8"><div class="ghost">?</div><div class="role">Executive team</div><div class="q">Will service cost grow slower than the fleet?</div><div class="na">NO RELIABLE ANSWER TODAY</div></div>
+    <p class="abs" style="left:90px;top:810px;margin:0;font:600 44px/1.2 var(--body);color:var(--ink)" data-a="up 32.6 0.9">Four teams. Four gaps. <span style="color:var(--red)">One cause.</span></p>
+  </section>
+
+  <!-- S4 ROOT CAUSE -->
+  <section class="scene" id="s4" data-in="36.8" data-out="54.3" data-name="Root cause">
+    <h2 class="abs h2" style="left:90px;top:150px" data-a="up 37.3 0.8">One root cause</h2>
+    <div class="abs lead" style="left:90px;top:236px" data-a="up 38.0 0.8">It's how our field data is produced.</div>
+    <div class="stampbox" style="left:90px" data-a="fade 39.0 0.5"><div class="stamp" data-a="stamp 39.3 0.6">Wrong time</div><div class="ex" data-a="up 39.9 0.7">Written after the job, often that evening, from memory.</div></div>
+    <div class="stampbox" style="left:680px" data-a="fade 42.0 0.5"><div class="stamp" data-a="stamp 42.3 0.6">Wrong method</div><div class="ex" data-a="up 42.9 0.7">Typed by hand, even facts the device already knows.</div></div>
+    <div class="stampbox" style="left:1270px" data-a="fade 45.0 0.5"><div class="stamp" data-a="stamp 45.3 0.6">Wrong reason</div><div class="ex" data-a="up 45.9 0.7">Forms are filled in only because they are required. They give the FSE nothing back, so we get the bare minimum.</div></div>
+    <div class="abs" id="fixbar" data-a="wipe 48.6 1.0">The usual fix is more control: more forms, more fields, more approvals.</div>
+    <p class="abs" style="left:90px;top:880px;margin:0;font:700 46px/1 var(--body);color:var(--red)" data-a="up 51.0 0.8">It makes things worse.</p>
+  </section>
+
+  <!-- S5 CONTROL LOOP -->
+  <section class="scene" id="s5" data-in="53.8" data-out="76.3" data-name="The control loop">
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 54.3 0.8">Why more control makes it worse</h2>
+    <svg class="ringwrap" id="ring5" viewBox="0 0 1920 1080"></svg>
+    <div class="ctext" data-a="fade 56.4 0.8"><div class="k">THE CONTROL LOOP</div><div class="v" id="lap5">CYCLE 1</div></div>
+    <div class="litem" style="top:250px" data-a="left 57.0 0.6"><div class="n">1</div><div class="t">Management can't see the field</div></div>
+    <div class="litem" style="top:370px" data-a="left 58.1 0.6"><div class="n">2</div><div class="t">So it adds forms, fields and approvals</div></div>
+    <div class="litem" style="top:490px" data-a="left 59.3 0.6"><div class="n">3</div><div class="t">FSEs fill them in late, from memory, with minimum effort</div></div>
+    <div class="litem" style="top:610px" data-a="left 60.4 0.6"><div class="n">4</div><div class="t">The data is incomplete. Nobody trusts it.</div></div>
+    <div class="meter" style="left:930px" data-a="up 61.5 0.7"><div class="k">FORMS PER JOB</div><div class="icons" id="ic5"></div></div>
+    <div class="meter" style="left:1400px" data-a="up 61.9 0.7"><div class="k">TRUST IN THE DATA</div><div class="track"><b id="bar5" style="background:var(--red)"></b></div></div>
+    <p class="abs" style="left:930px;top:890px;margin:0;font:700 38px/1.2 var(--body);color:var(--red)" data-a="up 70.5 0.8">Each cycle adds forms and removes truth.</p>
+  </section>
+
+  <!-- S6 SERVICE LOOP -->
+  <section class="scene" id="s6" data-in="75.8" data-out="98.3" data-name="The service loop">
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 76.3 0.8">The service loop</h2>
+    <svg class="ringwrap" id="ring6" viewBox="0 0 1920 1080"></svg>
+    <div class="ctext" data-a="fade 78.0 0.8"><div class="k" style="color:var(--good)">THE SERVICE LOOP</div><div class="v" id="lap6">CYCLE 1</div></div>
+    <div class="litem" style="top:250px" data-a="left 78.6 0.6"><div class="n">1</div><div class="t">Equip FSEs with tools that save time on every job</div></div>
+    <div class="litem" style="top:370px" data-a="left 79.7 0.6"><div class="n">2</div><div class="t">Adoption follows without policing costs</div></div>
+    <div class="litem" style="top:490px" data-a="left 80.9 0.6"><div class="n">3</div><div class="t">Data is captured during the work, accurately</div></div>
+    <div class="litem" style="top:610px" data-a="left 82.0 0.6"><div class="n">4</div><div class="t">Better data makes the tools smarter</div></div>
+    <div class="meter" style="left:930px" data-a="up 83.0 0.7"><div class="k">PAPERWORK PER JOB</div><div class="icons" id="ic6"></div></div>
+    <div class="meter" style="left:1400px" data-a="up 83.4 0.7"><div class="k">QUALITY OF THE DATA</div><div class="track"><b id="bar6" style="background:var(--good)"></b></div></div>
+    <p class="abs" style="left:930px;top:880px;width:900px;margin:0;font:600 34px/1.25 var(--body);color:var(--good)" data-a="up 92.0 0.9">Tools that make the job faster give the company accurate data at no extra cost.</p>
+  </section>
+
+  <!-- S7 ONE WORK ORDER -->
+  <section class="scene" id="s7" data-in="97.8" data-out="120.3" data-name="One work order">
+    <div class="abs eyebrow" style="left:90px;top:112px" data-a="fade 98.2 0.6">Example</div>
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 98.3 0.8">One work order, captured by the system</h2>
+    <div class="abs" id="woCap" data-a="up 115.0 0.8">The FSE only adds what the system can't know.</div>
+    <div class="abs" id="track" data-a="up 99.0 0.8">
+      <div id="wline"></div><div id="wfill"></div><div id="wmark"></div>
+    </div>
+    <div class="abs" id="legend" data-a="fade 99.6 0.6"><span><i style="background:var(--auto)"></i>SYSTEM-CAPTURED</span><span><i style="background:var(--fse)"></i>FSE INPUT: TAP, SCAN OR VOICE</span></div>
+    <div class="abs" id="woImg" data-a="fade 99.4 0.9"><img class="tab-img" src="tablo_exploded.webp" alt="" data-kb="99 120 1.0 1.06"></div>
+    <div class="abs" id="voice"><span class="rec"></span>VOICE NOTE<div id="wave"></div></div>
+    <div class="abs" id="scan"><i class="br"></i><i class="br"></i><i class="br"></i><i class="br"></i><i class="ln"></i></div>
+    <div class="abs" id="scanChip">PN · LOT · SN CAPTURED ✓</div>
+    <div class="abs" id="rec" data-a="up 99.6 0.8">
+      <div class="hd"><span>SERVICE RECORD</span><b id="recState">IN PROGRESS</b></div>
+      <div id="rows"></div>
+    </div>
+  </section>
+
+  <!-- S8 REMOTE SUPPORT -> CASE LIBRARY -->
+  <section class="scene" id="s8" data-in="119.8" data-out="132.3" data-name="Remote support">
+    <div class="abs eyebrow" style="left:90px;top:112px" data-a="fade 120.3 0.4">Remote expert support · Example</div>
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 120.3 0.45">One senior's fix becomes every FSE's playbook</h2>
+    <div class="abs lead" style="left:90px;top:226px" data-a="up 120.71 0.45">Every remote-support call is recorded and turned into a reusable case the company owns.</div>
+
+    <div class="abs rstep" style="left:90px" data-a="fade 121.12 0.4"><b>01</b>LIVE CALL</div>
+    <div class="abs rstep" style="left:679px" data-a="fade 124.08 0.4"><b>02</b>AI BUILDS THE CASE</div>
+    <div class="abs rstep" style="left:1268px" data-a="fade 127.30 0.4"><b>03</b>EVERY FSE CAN FIND IT</div>
+    <div class="abs rarrow" style="left:652px" data-a="fade 124.0 0.3">→</div>
+    <div class="abs rarrow" style="left:1241px" data-a="fade 127.2 0.3">→</div>
+
+    <div class="abs" id="live" data-a="up 121.12 0.45">
+      <div class="vid"><img src="tablo_exploded.webp" alt="">
+        <span class="tagl"><i></i>REC · JUNIOR FSE ON SITE</span>
+        <span class="pip"><span class="av"></span>SENIOR FSE<br>REMOTE</span>
+      </div>
+      <div class="tr" data-a="left 121.78 0.4"><b>SENIOR</b>Move the camera to the connector.</div>
+      <div class="tr" data-a="left 122.55 0.4"><b>SENIOR</b>Measure the voltage at that terminal.</div>
+      <div class="tr" data-a="left 123.31 0.4"><b>JUNIOR</b>Reseated it. Functional test passes.</div>
+    </div>
+
+    <div class="abs" id="casecard" data-a="up 124.08 0.45">
+      <div class="hd"><span>CASE #18421</span><span>DRAFTED BY AI</span></div>
+      <div class="sym" data-a="fade 124.39 0.4"><b>SYMPTOM</b>Intermittent conductivity alarm after startup</div>
+      <div class="chap" data-a="left 124.69 0.35"><span>03:42</span>Connector discoloration spotted</div>
+      <div class="chap" data-a="left 125.10 0.35"><span>07:15</span>Voltage measured at the terminal</div>
+      <div class="chap" data-a="left 125.51 0.35"><span>09:03</span>Sensor ruled out</div>
+      <div class="chap" data-a="left 125.92 0.35"><span>12:27</span>Root cause: loose connector</div>
+      <div class="chap" data-a="left 126.33 0.35"><span>18:40</span>Reseated; functional test passed</div>
+      <div class="ok" data-a="pop 126.89 0.4">✓ APPROVED BY SENIOR FSE</div>
+    </div>
+
+    <div class="abs" id="library" data-a="up 127.30 0.45">
+      <div class="search"><span class="q" data-a="type 127.65 1.12">conductivity alarm after startup</span><i class="caret"></i></div>
+      <div class="res" data-a="fade 128.78 0.4"><b>27</b> similar cases found</div>
+      <div class="bars" data-a="fade 129.14 0.4">
+        <div class="bar"><span>Connector</span><i style="width:90%"></i><em>9</em></div>
+        <div class="bar"><span>Sensor</span><i style="width:60%"></i><em>6</em></div>
+        <div class="bar"><span>Flow path</span><i style="width:50%"></i><em>5</em></div>
+      </div>
+      <div class="hit" data-a="up 129.49 0.4"><span class="play">▶</span><div><b>Case #18421</b>Watch 06:20–10:45 · approved</div></div>
+    </div>
+
+    <p class="abs" style="left:90px;top:915px;margin:0;font:700 36px/1.2 var(--body);color:var(--red)" data-a="up 129.90 0.45">The know-how stays when people leave, and one senior's experience reaches every site.</p>
+  </section>
+
+  <!-- S9 DEVICE & DATA -->
+  <section class="scene" id="s9" data-in="131.8" data-out="144.3" data-name="Device &amp; data">
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 132.3 0.8">One company tablet. Company-owned data.</h2>
+    <div class="abs" id="tablet" data-a="up 132.8 0.9"><div class="scr">
+      <div class="sb"><span>WORK ORDER · EXAMPLE</span><span>09:18</span></div>
+      <div class="wt" data-a="fade 133.4 0.5">Tablo · on site</div>
+      <div class="hist" data-a="up 133.7 0.5"><b>MACHINE HISTORY</b>Last visit 43 days ago · conductivity alarm · valve replaced</div>
+      <div class="grid">
+        <div class="btn" data-a="scale 134.0 0.4">Scan parts</div>
+        <div class="btn" data-a="scale 134.2 0.4">Voice note</div>
+        <div class="btn" data-a="scale 134.4 0.4">Diagrams</div>
+        <div class="btn" data-a="scale 134.6 0.4">Remote expert</div>
+      </div>
+      <div class="sign" data-a="up 134.9 0.5">Review &amp; sign</div>
+    </div></div>
+    <div class="ocol co" style="left:710px" data-a="up 135.4 0.7">
+      <div class="hdr">The company owns</div>
+      <div class="oit" data-a="left 135.9 0.5">Service records and part scans</div>
+      <div class="oit" data-a="left 136.2 0.5">Equipment photos and remote-support video</div>
+      <div class="oit" data-a="left 136.5 0.5">The case library, which stays when people leave</div>
+      <div class="oit" data-a="left 136.8 0.5">Our service data stays ours: an asset that compounds for us, not for a vendor’s AI</div>
+    </div>
+    <div class="ocol fs" style="left:1093px" data-a="up 137.6 0.7">
+      <div class="hdr">Built-in safeguards</div>
+      <div class="oit" data-a="left 138.1 0.5">FSEs verify their own data before it is used</div>
+      <div class="oit" data-a="left 138.4 0.5">Every record signed by the FSE who did the work</div>
+      <div class="oit" data-a="left 138.7 0.5">Written notice of what is collected, as some states require</div>
+      <div class="oit" data-a="left 139.0 0.5">No company data on personal phones</div>
+    </div>
+    <div class="ocol no" style="left:1476px" data-a="up 139.8 0.7">
+      <div class="hdr">Out of scope</div>
+      <div class="oit" data-a="left 140.3 0.5">Off-shift location: legal risk, no business value</div>
+      <div class="oit" data-a="left 140.6 0.5">Patient information: HIPAA exposure</div>
+      <div class="oit" data-a="left 140.9 0.5">Personal devices, apps and messages</div>
+    </div>
+  </section>
+
+  <!-- S10 FDA -->
+  <section class="scene" id="s10" data-in="143.8" data-out="158.3" data-name="FDA QMSR">
+    <div class="abs eyebrow" style="left:90px;top:112px" data-a="fade 144.2 0.6">Since February 2, 2026 · FDA QMSR</div>
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 144.3 0.8">What every service record must contain</h2>
+    <div class="abs lead" style="left:90px;top:230px;font-size:32px" data-a="up 145.0 0.8">21 CFR Part 820 now incorporates ISO 13485. Section 820.35(b) sets the minimum content.</div>
+    <div class="abs" id="qms">
+      <div class="qhead" data-a="fade 145.6 0.5"><span>REQUIRED BY 820.35(b)</span><span></span><span>HOW THIS MODEL CAPTURES IT</span><span></span></div>
+      <div id="qrows"></div>
+    </div>
+    <div class="abs" id="qcall" data-a="wipe 154.6 1.0"><span class="t">The design that saves FSE time produces every required field.</span><span class="c">21 CFR 820.35(b)</span></div>
+  </section>
+
+  <!-- S11 PROVEN ELSEWHERE -->
+  <section class="scene" id="s11" data-in="157.8" data-out="175.0" data-name="Proven elsewhere">
+    <div class="abs eyebrow" style="left:90px;top:112px" data-a="fade 158.2 0.6">Proven elsewhere</div>
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 158.3 0.8">It's been done before</h2>
+    <div class="abs lead" style="left:90px;top:226px" data-a="up 159.0 0.8">Our four questions have already been answered elsewhere.</div>
+    <div class="ccard" style="left:90px" data-a="up 160.0 0.8">
+      <div class="role">Finance · Executive team</div><div class="echo">What did this repair cost? Will service cost grow slower than the fleet?</div>
+      <div class="co">Rolls-Royce</div><div class="ind">AIRCRAFT ENGINES · TOTALCARE</div>
+      <div class="tx">Prices engine service at a fixed rate per flying hour, and uses engine health data to plan maintenance before it is needed.</div>
+      <div class="ft"><b>FOR TABLO</b>Know the cost of every work order, then the yearly service cost per installed Tablo.</div>
+      <div class="src">SOURCE: ROLLS-ROYCE</div></div>
+    <div class="ccard" style="left:679px" data-a="up 163.5 0.8">
+      <div class="role">Service leadership</div><div class="echo">Where does FSE time really go?</div>
+      <div class="co">UPS</div><div class="ind">PARCEL DELIVERY · DIAD</div>
+      <div class="tx">Since 1991, drivers have carried a company-issued handheld that records signatures and scans on the spot. It saved about 59 million pages of paper a year.</div>
+      <div class="ft"><b>FOR TABLO</b>One company tablet. Every step recorded as it happens.</div>
+      <div class="src">SOURCE: COMPUTER HISTORY MUSEUM</div></div>
+    <div class="ccard" style="left:1268px" data-a="up 167.0 0.8">
+      <div class="role">Quality &amp; Regulatory</div><div class="echo">Which failures and part lots are trending?</div>
+      <div class="co">Medtronic</div><div class="ind">MEDICAL DEVICES · WITH FDA</div>
+      <div class="tx">Piloted generative AI with rule-based automation in complaint handling. AI helps with data entry and summaries; specialists focus on critical analysis.</div>
+      <div class="ft"><b>FOR TABLO</b>AI reads complaint and service text. Quality reviews what it finds.</div>
+      <div class="src">SOURCE: MDIC CASE STUDY, FEB 2026</div></div>
+  </section>
+
+  <!-- S12 CRM BRIDGE -->
+  <section class="scene" id="s12" data-in="174.5" data-out="186.0" data-name="Closer to home">
+    <div class="abs eyebrow" style="left:90px;top:112px" data-a="fade 174.9 0.6">Closer to home</div>
+    <h2 class="abs h2" style="left:90px;top:140px" data-a="up 175.0 0.8">We have solved this before, with Salesforce</h2>
+    <div class="abs mhead" style="left:90px" data-a="fade 175.6 0.6">SALES, ON SALESFORCE</div>
+    <div class="abs mhead" style="left:990px" data-a="fade 175.6 0.6">FIELD SERVICE</div>
+    <div class="mrow" style="top:320px"><div class="l" data-a="left 176.0 0.6">Reps kept customers in their own heads and spreadsheets.</div><div class="ar" data-a="fade 176.5 0.4">→</div><div class="r" data-a="left 176.6 0.6">FSEs keep repair know-how in their own heads.</div></div>
+    <div class="mrow" style="top:470px"><div class="l" data-a="left 178.4 0.6">Data became the company's. Credit stayed with the rep.</div><div class="ar" data-a="fade 178.9 0.4">→</div><div class="r" data-a="left 179.0 0.6">Data becomes the company's. Credit stays with the FSE.</div></div>
+    <div class="mrow" style="top:620px"><div class="l" data-a="left 180.8 0.6">Deals outside Salesforce got no pricing or support.</div><div class="ar" data-a="fade 181.3 0.4">→</div><div class="r" data-a="left 181.4 0.6">Parts and expenses flow through the work order.</div></div>
+    <p class="abs" style="left:90px;top:840px;margin:0;font:700 44px/1.2 var(--body);color:var(--red)" data-a="up 183.0 0.8">Same problem. Same answer.</p>
+  </section>
+
+  <!-- S13 END -->
+  <section class="scene" id="s13" data-in="185.5" data-out="194" data-name="Closing">
+    <img class="abs tab-img" src="tablo_real.webp" alt="" style="left:1100px;top:120px;width:800px;height:860px" data-a="fade 185.8 1.4" data-kb="185.8 193 1.0 1.05">
+    <h1 class="abs h1" style="left:104px;top:300px" data-a="up 186.2 1.0">Help the<br>FSE <em>first.</em></h1>
+    <div class="abs lead" style="left:110px;top:600px;font-size:52px;color:var(--ink)" data-a="up 187.4 0.9">Data follows.</div>
+  </section>
+
+  <div id="fadeIn"></div><div id="fadeOut"></div>
+</div>
+</div>
+
+<div id="cover"><button type="button" id="bigPlay">▶ Play with sound</button></div>
+<div id="ui">
+  <button type="button" id="bPlay" aria-label="Play">PLAY</button>
+  <input type="range" id="scrub" min="0" max="197" step="0.01" value="0" aria-label="Timeline">
+  <span id="uiTime">00:00 / 03:17</span>
+</div>
+<audio id="music" src="Luwaks%20-%20Reversed%20Beginning.mp3" preload="auto"></audio>
+
+<script>
+(function(){
+const DUR=197, POSTER=0;
+/* timeline map: authored (old) time -> playback time. Scenes are authored on one clock
+   and re-paced here so text-heavy scenes get more reading time. */
+const KN=[[0,0],[4.6,4.6],[11.8,5.6],[12.3,6.1],[23.8,17.6],[24.3,18.1],[36.8,32.6],[37.3,33.1],[53.8,53.1],[54.3,53.6],[75.8,65.6],[76.3,66.1],[97.8,78.1],[98.3,78.6],[119.8,98.1],[120.3,98.6],[131.8,121.1],[132.3,121.6],[143.8,141.1],[144.3,141.6],[157.8,159.1],[158.3,159.6],[174.5,178.1],[175.0,178.6],[185.5,189.6],[186.0,190.1],[193,197]];
+function Rinv(T){ if(T<=0) return 0; for(let i=1;i<KN.length;i++){const [o0,n0]=KN[i-1],[o1,n1]=KN[i]; if(T<=n1) return o0+(o1-o0)*(T-n0)/(n1-n0);} return KN[KN.length-1][0]+(T-KN[KN.length-1][1]); }
+const $=id=>document.getElementById(id);
+const cl=x=>x<0?0:x>1?1:x;
+const eOut=p=>1-Math.pow(1-p,3);
+const eIO=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+const eBack=p=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2);};
+const lerp=(a,b,p)=>a+(b-a)*p;
+const fmt=s=>{s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function el(tag,cls,parent,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;if(parent)parent.appendChild(e);return e;}
+
+/* ---------- build: progress segments ---------- */
+const NSEG=72; const segs=[];
+for(let i=0;i<NSEG;i++) segs.push(el('i','', $('segs')));
+
+/* ---------- build: S2 territory ---------- */
+let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646;};
+const tsvg=$('terrSvg');
+const pat=sv('pattern',{id:'dots',width:30,height:30,patternUnits:'userSpaceOnUse'},sv('defs',{},tsvg));
+sv('circle',{cx:15,cy:15,r:1.6,fill:'#C9CBC1'},pat);
+sv('rect',{x:0,y:0,width:900,height:820,fill:'url(#dots)'},tsvg);
+const pins=[];
+for(let i=0;i<30;i++){const x=70+rnd()*760,y=90+rnd()*680; pins.push({x,y});}
+const hubs=[{x:170,y:640},{x:470,y:260},{x:760,y:600}];
+const routes=[[],[],[]]; pins.forEach((p,i)=>{let bi=0,bd=1e9;hubs.forEach((h,j)=>{const dd=Math.hypot(p.x-h.x,p.y-h.y);if(dd<bd){bd=dd;bi=j;}}); if(routes[bi].length<6) routes[bi].push(i);});
+routes.forEach((r,ri)=>{const h=hubs[ri];let d=`M${h.x} ${h.y}`;
+  const left=r.map(i=>pins[i]); let cur=h;
+  while(left.length){let bi=0,bd=1e9;left.forEach((p,j)=>{const dd=Math.hypot(p.x-cur.x,p.y-cur.y);if(dd<bd){bd=dd;bi=j;}});cur=left.splice(bi,1)[0];d+=` L${cur.x.toFixed(0)} ${cur.y.toFixed(0)}`;}
+  const pth=sv('path',{d,pathLength:1,class:'draw',stroke:'#59615A','stroke-width':2.5,'stroke-dasharray':'1','stroke-linejoin':'round'},tsvg);
+  pth.dataset.a=`draw ${13.4+ri*0.5} 3.2`;});
+pins.forEach((p,i)=>{const g=sv('g',{transform:`translate(${p.x} ${p.y})`},tsvg);
+  const inner=sv('g',{},g); inner.dataset.a=`popsvg ${12.7+i*0.13} 0.5`;
+  sv('circle',{r:13,fill:'none',stroke:'#C3392B','stroke-width':2,opacity:.35},inner);
+  sv('circle',{r:6.5,fill:'#C3392B'},inner);});
+hubs.forEach((h,i)=>{const g=sv('g',{transform:`translate(${h.x} ${h.y})`},tsvg); const inner=sv('g',{},g); inner.dataset.a=`popsvg ${12.5+i*0.2} 0.5`;
+  sv('rect',{x:-22,y:-15,width:44,height:30,fill:'#2B322D'},inner);
+  sv('text',{x:0,y:6,'text-anchor':'middle','font-family':'IBM Plex Mono, monospace','font-size':15,'font-weight':600,fill:'#E9E7DE'},inner).textContent='FSE';});
+const forms=$('forms');
+for(let i=0;i<5;i++){const s=el('div','sheet',forms,'<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>');s.style.left=(i*24)+'px';s.style.top=(i*-6+10)+'px';s.style.transform=`rotate(${(i-2)*3}deg)`;s.dataset.a=`drop ${19.0+i*0.38} 0.5`;}
+
+/* ---------- build: loops ---------- */
+const RC={x:520,y:590,r:250};
+function buildLoop(svgId,color,t0){
+  const s=$(svgId); const g=sv('g',{},s);
+  const arcs=[]; for(let i=0;i<4;i++){const a0=(-90+i*90+14)*Math.PI/180,a1=(-90+i*90+76)*Math.PI/180;
+    const x0=RC.x+RC.r*Math.cos(a0),y0=RC.y+RC.r*Math.sin(a0),x1=RC.x+RC.r*Math.cos(a1),y1=RC.y+RC.r*Math.sin(a1);
+    const p=sv('path',{d:`M${x0} ${y0} A${RC.r} ${RC.r} 0 0 1 ${x1} ${y1}`,pathLength:1,class:'draw',stroke:color,'stroke-width':5,'stroke-linecap':'round'},g);
+    p.dataset.a=`draw ${t0-1.6+i*0.25} 0.7`;
+    const ah=(-90+i*90+76)*Math.PI/180, tx=-Math.sin(ah), ty=Math.cos(ah);
+    const hx=x1, hy=y1, s1=16;
+    const tri=sv('path',{d:`M${hx+tx*s1} ${hy+ty*s1} L${hx-ty*9-tx*2} ${hy+tx*9-ty*2} L${hx+ty*9-tx*2} ${hy-tx*9-ty*2} Z`,fill:color},g);
+    tri.dataset.a=`fade ${t0-1.0+i*0.25} 0.3`; }
+  const nodes=[]; for(let i=0;i<4;i++){const a=(-90+i*90)*Math.PI/180,x=RC.x+RC.r*Math.cos(a),y=RC.y+RC.r*Math.sin(a);
+    const ng=sv('g',{transform:`translate(${x} ${y})`},g); const inner=sv('g',{},ng); inner.dataset.a=`popsvg ${t0-1.2+i*0.2} 0.5`;
+    const halo=sv('circle',{r:44,fill:color,opacity:0},inner);
+    sv('circle',{r:34,fill:'#F0EEE7',stroke:color,'stroke-width':4},inner);
+    const fillc=sv('circle',{r:34,fill:color,opacity:0},inner);
+    const tx=sv('text',{y:10,'text-anchor':'middle','font-family':'IBM Plex Mono, monospace','font-size':28,'font-weight':600,fill:color},inner); tx.textContent=i+1;
+    nodes.push({halo,fillc,tx}); }
+  const trail=[]; for(let k=0;k<6;k++) trail.push(sv('circle',{r:13-k*1.6,fill:color,opacity:0},g));
+  return {nodes,trail,color};
+}
+const L5=buildLoop('ring5','#C3392B',57.0), L6=buildLoop('ring6','#2F6B57',78.6);
+for(const id of ['ic5','ic6']) for(let i=0;i<16;i++) el('i','', $(id));
+
+/* ---------- build: S7 work order ---------- */
+const STEPS=[['Dispatch accepted','AUTO','auto'],['Arrive on site','AUTO · GEOFENCE','auto'],['Service start','FSE · TAP','fse'],['Diagnosis','FSE · VOICE','fse'],['Part replaced','FSE · SCAN','fse'],['Functional test','AUTO · DEVICE LOG','auto'],['Review & sign','FSE · AI DRAFT','fse'],['Depart','AUTO · GEOFENCE','auto']];
+const WX0=150, WSTEP=1620/7, WT0=100.4, WDT=1.85;
+const wnodes=STEPS.map((s,i)=>{const n=el('div','wnode '+s[2],$('track'),`<div class="dot"></div><div class="nm">${s[0]}</div><div class="tg">${s[1]}</div>`);n.style.left=(WX0+i*WSTEP)+'px';return n;});
+const ROWS=[['DEVICE','Tablo hemodialysis system','WORK ORDER','auto'],['ARRIVED','09:11','GEOFENCE','auto'],['SERVICE START','09:18','ONE TAP','fse'],['FINDING','Valve assembly sticking','VOICE → AI','fse'],['PART','PN · LOT · SN recorded','SCAN','fse'],['TEST','Functional test: pass','DEVICE LOG','auto'],['SIGNED','Reviewed and signed by FSE','E-SIGNATURE','fse'],['DEPARTED','11:08','GEOFENCE','auto']];
+ROWS.forEach((r,i)=>{const row=el('div','rrow',$('rows'),`<span class="rl">${r[0]}</span><span class="rv">${r[1]}</span><span class="rs ${r[3]}">${r[2]}</span>`);row.dataset.a=`left ${WT0+i*WDT+0.35} 0.5`;});
+for(let i=0;i<22;i++) el('i','', $('wave'));
+
+
+/* ---------- build: S10 QMSR ---------- */
+const QR=[['Device name and UDI','One scan of the machine’s UDI label'],['Date of service','System timestamps'],['Who serviced the device','Tablet sign-in and the FSE’s e-signature'],['Service performed','Voice note → AI draft → FSE review and signature'],['Test and inspection data','Device log, or entered on site']];
+QR.forEach((q,i)=>{const r=el('div','qrow',$('qrows'),`<span class="rq">${q[0]}</span><span class="ar">→</span><span class="src">${q[1]}</span><span class="ok">✓</span>`);
+  r.dataset.a=`fade ${146.0+i*0.45} 0.5`; r.querySelector('.src').dataset.a=`left ${148.6+i*0.9} 0.5`; r.querySelector('.ar').dataset.a=`fade ${148.6+i*0.9} 0.4`; r.querySelector('.ok').dataset.a=`pop ${148.9+i*0.9} 0.5`;});
+
+/* ---------- collect animations ---------- */
+const scenes=[...document.querySelectorAll('.scene')].map(e=>({e,a:+e.dataset.in,b:+e.dataset.out,name:e.dataset.name}));
+const anims=[...$('stage').querySelectorAll('[data-a]')].map(e=>{const [type,s,d]=e.dataset.a.split(' ');const o=e.dataset.o?e.dataset.o.split(' ').map(Number):null;return {e,type,s:+s,d:+d,o,sc:e.closest('.scene'),full:type==='type'?e.textContent:null};});
+const kbs=[...$('stage').querySelectorAll('[data-kb]')].map(e=>{const [s,t,a,b]=e.dataset.kb.split(' ').map(Number);return {e,s,t,a,b};});
+anims.forEach(a=>{if(a.type==='draw'){a.e.style.strokeDasharray='1';}});
+
+function applyAnim(a,t){
+  const p=cl((t-a.s)/a.d), e=eOut(p);
+  const out=a.o?1-eIO(cl((t-a.o[0])/a.o[1])):1;
+  const st=a.e.style;
+  switch(a.type){
+    case 'fade': st.opacity=e*out; break;
+    case 'up': st.opacity=e*out; st.transform=`translateY(${(1-e)*30}px)`; break;
+    case 'left': st.opacity=e*out; st.transform=`translateX(${(1-e)*-36}px)`; break;
+    case 'scale': st.opacity=e*out; st.transform=`scale(${.9+.1*eBack(p)})`; break;
+    case 'pop': st.opacity=cl(p*3)*out; st.transform=`scale(${p>=1?1:lerp(1.6,1,eOut(p))})`; break;
+    case 'stamp': st.opacity=cl(p*3)*out; st.transform=`scale(${p>=1?1:lerp(1.7,1,eOut(p))}) rotate(${-4*cl(p*2)}deg)`; break;
+    case 'popsvg': a.e.setAttribute('transform',`scale(${p<=0?0.001:eBack(p)})`); a.e.setAttribute('opacity',cl(p*2)*out); break;
+    case 'drop': st.opacity=e*out; st.translate=`0 ${(1-e)*-60}px`; break;
+    case 'draw': st.strokeDashoffset=String(1-e); st.opacity=out; break;
+    case 'type': {const n=Math.round(a.full.length*cl((t-a.s)/a.d)); const txt=a.full.slice(0,n); if(a.e.textContent!==txt) a.e.textContent=txt; break;}
+    case 'wipe': st.clipPath=`inset(0 ${(1-e)*100}% 0 0)`; st.opacity=p>0?out:0; break;
+  }
+}
+
+/* ---------- per-frame hooks ---------- */
+function loopHook(L,t0,period,lapId,barId,icId,good,t){
+  const on=t>=t0, ph=Math.max(0,(t-t0)/period), ang=-90+ph*360;
+  const rad=a=>a*Math.PI/180;
+  L.trail.forEach((c,k)=>{const a=rad(ang-k*5.5);c.setAttribute('cx',RC.x+RC.r*Math.cos(a));c.setAttribute('cy',RC.y+RC.r*Math.sin(a));c.setAttribute('opacity',on?(1-k/6)*.95:0);});
+  L.nodes.forEach((n,i)=>{const na=-90+i*90;let d=((ang-na)%360+360)%360;const reached=on&&ph*4>=i-0.001;const g=reached?Math.max(0,1-d/110):0;
+    n.halo.setAttribute('opacity',g*.22); n.fillc.setAttribute('opacity',g); n.tx.setAttribute('fill',g>.5?'#F0EEE7':L.color);});
+  const sec=L.nodes[0].halo.closest('.scene');
+  sec.querySelectorAll('.litem').forEach((it,i)=>{const na=-90+i*90;let d=((ang-na)%360+360)%360;const reached=on&&ph*4>=i-0.001;const g=reached?Math.max(0,1-d/110):0;
+    it.style.borderLeftColor=g>.05?L.color:'var(--line2)'; const n=it.querySelector('.n'); n.style.background=g>.5?L.color:'transparent'; n.style.color=g>.5?'#F0EEE7':'var(--ink3)'; n.style.borderColor=g>.05?L.color:'var(--ink3)';});
+  $(lapId).textContent='CYCLE '+(Math.floor(ph)+1);
+  const f=1-Math.exp(-ph*0.55);
+  const count=good?Math.max(2,Math.round(13-11*f)):Math.min(16,Math.round(4+12*f));
+  [...$(icId).children].forEach((c,i)=>{c.style.opacity=i<count?1:0; c.style.borderColor=good?'var(--good)':'var(--ink2)';});
+  $(barId).style.width=(good?lerp(22,92,f):lerp(80,12,f))+'%';
+}
+function woHook(t){
+  const k=(t-WT0)/WDT; const pos=Math.max(0,Math.min(7,k));
+  const seg=Math.floor(pos), fr=pos-seg, mv=seg>=7?0:eIO(cl((fr-0.6)/0.4));
+  const x=WX0+(seg+mv)*WSTEP;
+  $('wmark').style.left=x+'px'; $('wmark').style.opacity=t>=WT0-0.2?1:0;
+  $('wfill').style.width=Math.max(0,x-WX0)+'px';
+  wnodes.forEach((n,i)=>{const ti=WT0+i*WDT, r=t>=ti; const d=n.firstChild; const c=n.classList.contains('auto')?'var(--auto)':'var(--fse)';
+    d.style.background=r?c:'var(--paper)'; d.style.borderColor=r?c:'var(--ink3)';
+    const pp=cl((t-ti)/0.9); d.style.boxShadow=r&&pp<1?`0 0 0 ${pp*22}px rgba(195,57,43,${(1-pp)*.35})`:'none';
+    n.style.opacity=t>=ti-0.1?1:.45;});
+  const vs=WT0+3*WDT+0.2, ve=vs+2.3; const vp=cl((t-vs)/0.35)*(1-cl((t-ve)/0.35));
+  $('voice').style.opacity=vp; [...$('wave').children].forEach((b,i)=>{b.style.height=(6+30*Math.abs(Math.sin(t*9.3+i*.71)*Math.sin(t*3.7+i*1.93)))+'px';});
+  const ss=WT0+4*WDT+0.1, se=ss+2.6; const sp=cl((t-ss)/0.35)*(1-cl((t-se)/0.35));
+  const sc=$('scan'); sc.style.opacity=sp; sc.style.transform=`scale(${lerp(1.25,1,eOut(cl((t-ss)/0.4)))})`;
+  const lp=cl((t-ss-0.4)/1.3); sc.querySelector('.ln').style.top=(10+lp*196)+'px'; sc.querySelector('.ln').style.opacity=lp>0&&lp<1?1:0;
+  $('scanChip').style.opacity=cl((t-ss-1.7)/0.3)*(1-cl((t-se)/0.35));
+  $('recState').textContent=t>=WT0+6*WDT?'SIGNED · COMPLETE':'IN PROGRESS'; $('recState').style.color=t>=WT0+6*WDT?'var(--good)':'var(--red)';
+}
+
+/* ---------- render ---------- */
+let curScene=-1;
+function render(T){ const t=Rinv(T);
+  scenes.forEach((s,i)=>{const v=cl((t-s.a)/.5)*cl((s.b-t)/.5); s.e.style.opacity=v; s.e.style.visibility=v>0.001?'visible':'hidden';});
+  anims.forEach(a=>{ if(!a.sc||a.sc.style.visibility!=='hidden') applyAnim(a,t); });
+  kbs.forEach(k=>{const p=eIO(cl((t-k.s)/(k.t-k.s))); k.e.style.scale=String(lerp(k.a,k.b,p));});
+  if(t>54&&t<77) loopHook(L5,57.0,6.0,'lap5','bar5','ic5',false,t);
+  if(t>75&&t<99) loopHook(L6,78.6,6.0,'lap6','bar6','ic6',true,t);
+  if(t>97&&t<121) woHook(t);
+  let si=0; scenes.forEach((s,i)=>{if(t>=s.a+0.25) si=i;});
+  if(si!==curScene){curScene=si; $('cScene').textContent=String(si+1).padStart(2,'0')+' / '+scenes.length+' · '+scenes[si].name;}
+  const on=Math.round(T/DUR*NSEG); segs.forEach((g,i)=>{g.className=i<on-1?'on':(i===on-1?'hot':'');});
+  $('cTime').textContent=fmt(T)+' / '+fmt(DUR);
+  $('fadeIn').style.opacity=1-cl(t/0.9);
+  $('fadeOut').style.opacity=cl((t-191.4)/1.5);
+}
+
+/* ---------- player ---------- */
+const stage=$('stage'), audio=$('music'), scrub=$('scrub'), bPlay=$('bPlay'), cover=$('cover');
+let t=POSTER, playing=false, last=performance.now(), exportMode=false, started=false;
+function fit(){const vp=$('viewport');const w=vp.clientWidth,h=vp.clientHeight;const s=Math.min(w/1920,h/1080);
+  stage.style.transform=`translate(${(w-1920*s)/2}px,${(h-1080*s)/2}px) scale(${s})`;}
+function vol(x){return Math.min(1,x/1.2)*cl((DUR-x)/6.5);}
+function syncAudio(){try{if(Math.abs(audio.currentTime-t)>0.2)audio.currentTime=t;}catch(e){}}
+function play(){if(!started){started=true;t=0;} if(t>=DUR-0.05)t=0;playing=true;cover.hidden=true;syncAudio();audio.volume=vol(t);const pr=audio.play();if(pr&&pr.catch)pr.catch(()=>{});bPlay.textContent='PAUSE';bPlay.setAttribute('aria-label','Pause');}
+function pause(){playing=false;audio.pause();bPlay.textContent='PLAY';bPlay.setAttribute('aria-label','Play');}
+function toggle(){playing?pause():play();}
+function tick(now){const dt=Math.min(.1,(now-last)/1000);last=now;
+  if(playing){ if(!audio.paused&&!audio.ended&&audio.readyState>=2&&!audio.error){t=audio.currentTime;} else t+=dt;
+    if(t>=DUR){t=DUR;pause();} try{audio.volume=vol(t);}catch(e){} }
+  if(!exportMode){render(t); scrub.value=t; $('uiTime').textContent=fmt(t)+' / '+fmt(DUR);}
+  requestAnimationFrame(tick);}
+bPlay.onclick=toggle; $('bigPlay').onclick=play; stage.addEventListener('click',()=>{if(!exportMode)toggle();});
+scrub.addEventListener('input',()=>{started=true;t=+scrub.value;cover.hidden=true;syncAudio();render(t);});
+addEventListener('keydown',e=>{if(e.target===scrub&&e.key!==' ')return; if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return; started=true; if(e.key===' '){e.preventDefault();toggle();} else if(e.key==='ArrowRight'){t=Math.min(DUR,t+5);syncAudio();} else if(e.key==='ArrowLeft'){t=Math.max(0,t-5);syncAudio();}});
+addEventListener('resize',fit); fit(); render(t); requestAnimationFrame(tick);
+window.FSE={DUR,render:x=>render(x),exportMode(){exportMode=true;pause();document.documentElement.classList.add('export');fit();}};
+})();
+</script>
+</html>
